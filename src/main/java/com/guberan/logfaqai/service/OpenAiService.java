@@ -1,8 +1,10 @@
 package com.guberan.logfaqai.service;
 
 import com.guberan.logfaqai.config.OpenAiConfig;
+import com.guberan.logfaqai.dto.LLMResponse;
 import com.guberan.logfaqai.external.OpenAiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,16 +18,18 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OpenAiService {
 
     private final WebClient webClient = WebClient.builder()
             .baseUrl("https://api.openai.com/v1")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
-
     private final OpenAiConfig config;
+    private final RestTemplate restTemplate;
 
-    public String generateAnswer(String question) {
+    
+    public LLMResponse generateAnswer(String question) {
         // call RAG microservice
         List<String> snippets = fetchRelevantSnippets(question);
         String context = snippets.isEmpty() ?
@@ -35,8 +39,8 @@ public class OpenAiService {
         String fullPrompt = "Answer the following question using the context below:\n"
                 + "- " + context + "\n\nQuestion: " + question;
 
-        System.out.println("🧠 Generated prompt for OpenAI:\n" + fullPrompt);
-        System.out.println("📎 Snippets used: " + snippets);
+        log.info("🧠 Generated prompt for OpenAI:\n" + fullPrompt);
+        log.info("📎 Snippets used: " + snippets);
 
         Map<String, Object> message = Map.of("role", "user", "content", fullPrompt);
         Map<String, Object> requestBody = Map.of(
@@ -44,7 +48,7 @@ public class OpenAiService {
                 "messages", List.of(message)
         );
 
-        return webClient.post()
+        String answer = webClient.post()
                 .uri("/chat/completions")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + config.getApiKey())
                 .bodyValue(requestBody)
@@ -52,12 +56,11 @@ public class OpenAiService {
                 .bodyToMono(OpenAiResponse.class)
                 .map(r -> r.getChoices().get(0).getMessage().getContent())
                 .block();
+        return new LLMResponse(answer, snippets);
     }
 
     private List<String> fetchRelevantSnippets(String query) {
         try {
-            RestTemplate restTemplate = new RestTemplate();
-
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -74,7 +77,7 @@ public class OpenAiService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("⚠️ RAG query failed: " + e.getMessage());
+            log.error("⚠️ RAG query failed: " + e.getMessage());
         }
         return List.of();
     }

@@ -2,10 +2,12 @@ package com.guberan.logfaqai.config;
 
 import com.guberan.logfaqai.model.Question;
 import com.guberan.logfaqai.repository.QuestionRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final QuestionRepository questionRepository;
@@ -22,7 +24,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             q.setAnswer("Kafka is used to stream logs in real time.");
             q.setValidated(true);
             questionRepository.save(q);
-            System.out.println("✅ Inserted default question into H2 database.");
+            log.info("✅ Inserted default question into H2 database.");
         }
     }
 }

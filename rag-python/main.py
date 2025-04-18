@@ -2,7 +2,7 @@ from fastapi import FastAPI, Body
 from pydantic import BaseModel
 from typing import List
 
-from embedding_store import search_similar_questions
+from embedding_store import search_similar_questions, build_and_save_index
 
 app = FastAPI()
 
@@ -39,3 +39,10 @@ async def rag_query(
     return RAGResponse(
         snippets=[r["answer"] for r in results]
     )
+
+
+@app.post("/rag/rebuild")
+def rebuild_index():
+    print("📡 Rebuild endpoint hit!")
+    build_and_save_index()
+    return {"message": "RAG index rebuilt successfully."}

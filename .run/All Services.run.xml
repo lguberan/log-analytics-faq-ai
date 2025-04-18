@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All Services" type="CompoundRunConfigurationType">
+    <toRun name="LogAnalyticsFaqAiApplication" type="Application" />
+    <toRun name="Run RAG (uvicorn)" type="PythonConfigurationType" />
+    <toRun name="React Frontend" type="ShConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>
