@@ -1,19 +1,23 @@
 spring:
   application:
     name: log-analytics-faq-ai
-  h2:
-    console:
-      enabled: true
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:./data/faqdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
     password:
-  security:
-    user:
-      name: admin
-      password: secret
-      roles: ADMIN
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
 openai:
   api-key: ${OPENAI_API_KEY}
   model: gpt-3.5-turbo
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+# http://localhost:8080/h2-console jdbc:h2://Users/lucien/IdeaProjects/log-analytics-faq-ai/data/faqdb

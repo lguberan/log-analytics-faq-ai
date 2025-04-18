@@ -17,7 +17,7 @@ public class FaqService {
     private final QuestionRepository questionRepository;
 
     public AskResponse processQuestion(String questionText) {
-        String answer = openAiService.getAnswer(questionText);
+        String answer = openAiService.generateAnswer(questionText);
 
         Question q = new Question();
         q.setText(questionText);

@@ -4,6 +4,14 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Python virtualenv and build artifacts
+rag-python/.venv/
+rag-python/__pycache__/
+rag-python/*.pyc
+rag-python/.env
+rag-python/rag_index.faiss
+rag-python/rag_metadata.json
+
 ### STS ###
 .apt_generated
 .classpath

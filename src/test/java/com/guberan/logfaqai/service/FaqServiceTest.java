@@ -32,7 +32,7 @@ class FaqServiceTest {
         String answer = "Kafka is used for real-time log ingestion.";
 
         // simulate GPT response
-        Mockito.when(openAiService.getAnswer(questionText)).thenReturn(answer);
+        Mockito.when(openAiService.generateAnswer(questionText)).thenReturn(answer);
 
         // when
         AskResponse response = faqService.processQuestion(questionText);

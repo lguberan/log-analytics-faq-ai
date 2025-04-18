@@ -3,9 +3,12 @@ package com.guberan.logfaqai.service;
 import com.guberan.logfaqai.config.OpenAiConfig;
 import com.guberan.logfaqai.external.OpenAiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -22,8 +25,20 @@ public class OpenAiService {
 
     private final OpenAiConfig config;
 
-    public String getAnswer(String question) {
-        Map<String, Object> message = Map.of("role", "user", "content", question);
+    public String generateAnswer(String question) {
+        // call RAG microservice
+        List<String> snippets = fetchRelevantSnippets(question);
+        String context = snippets.isEmpty() ?
+                "No relevant context found." :
+                String.join("\n- ", snippets);
+
+        String fullPrompt = "Answer the following question using the context below:\n"
+                + "- " + context + "\n\nQuestion: " + question;
+
+        System.out.println("🧠 Generated prompt for OpenAI:\n" + fullPrompt);
+        System.out.println("📎 Snippets used: " + snippets);
+
+        Map<String, Object> message = Map.of("role", "user", "content", fullPrompt);
         Map<String, Object> requestBody = Map.of(
                 "model", config.getModel(),
                 "messages", List.of(message)
@@ -37,5 +52,30 @@ public class OpenAiService {
                 .bodyToMono(OpenAiResponse.class)
                 .map(r -> r.getChoices().get(0).getMessage().getContent())
                 .block();
+    }
+
+    private List<String> fetchRelevantSnippets(String query) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            String jsonBody = "{\"question\": \"" + query.replace("\"", "\\\"") + "\"}";
+            HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
+
+            ResponseEntity<Map> response = restTemplate.postForEntity(
+                    "http://localhost:8001/rag/query", entity, Map.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                Map<String, Object> body = response.getBody();
+                if (body != null && body.containsKey("snippets")) {
+                    return (List<String>) body.get("snippets");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️ RAG query failed: " + e.getMessage());
+        }
+        return List.of();
     }
 }
