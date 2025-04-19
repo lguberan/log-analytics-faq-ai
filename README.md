@@ -39,37 +39,24 @@ This project integrates:
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Install
 
 Make sure you have:
 
 - Java 23
 - Python 3.9+ (with `venv`)
 - Node.js 18+ + npm (for frontend)
-- OpenAI API Key, ${OPENAI_API_KEY} environment variable set
+- **OpenAI API Key**, ${OPENAI_API_KEY} environment variable set
 
-Then run:
+#### 🧠 RAG Microservice (Python)
 
 ```bash
-./start.sh
+cd rag-python
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8001
 ```
-
-Visit:
-
-- Frontend: http://localhost:5173 (use admin/secret)
-- Backend Swagger UI: http://localhost:8080/swagger-ui.html
-- FastAPI docs (RAG): http://localhost:8001/docs
-
----
-
-## 💡 Suggested Example Question
-
-“How are logs handled from ingestion to visualization?”
-
-This question demonstrates the RAG (Retrieval-Augmented Generation) capability of the app, where the AI will generate an
-answer by leveraging previously validated project-specific answers.
-
----
 
 ## 🧪 Run & Development
 
@@ -91,6 +78,19 @@ cd rag-python && source .venv/bin/activate && uvicorn main:app --reload --port 8
 # frontend (React)
 cd frontend && npm run dev
 ```
+
+#### Visit:
+
+- Frontend: http://localhost:5173 (use admin/secret)
+- Backend Swagger UI: http://localhost:8080/swagger-ui.html
+- FastAPI docs (RAG): http://localhost:8001/docs
+
+#### 💡 Suggested Example Question
+
+“How are logs handled from ingestion to visualization?”
+
+This question demonstrates the RAG (Retrieval-Augmented Generation) capability of the app, where the AI will generate an
+answer by leveraging previously validated project-specific answers.
 
 ---
 
