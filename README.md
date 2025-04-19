@@ -7,15 +7,15 @@ FAQ
 answers. The AI assistant uses semantic similarity (via vector embeddings and FAISS) to retrieve the most relevant
 existing answers as contextual “snippets” before generating a new response.
 
-✅ The assistant doesn’t answer from scratch — it uses your validated answers as trusted sources.
-✅ This ensures more accurate and relevant responses tailored to your project.
-✅ Powered by OpenAI, FAISS (vector search), and Spring Boot + FastAPI integration.
+- ✅ The assistant doesn’t answer from scratch — it uses your validated answers as trusted sources.
+- ✅ This ensures more accurate and relevant responses tailored to your project.
+- ✅ Powered by OpenAI, FAISS (vector search), and Spring Boot + FastAPI integration.
 
 ---
 
 ## 🖼️ Architecture
 
-![Architecture Diagram](docs/images/architecture.png)
+<img src="docs/images/architecture.png" alt="Architecture Diagram" width="500"/>
 
 This project integrates:
 
