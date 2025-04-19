@@ -53,7 +53,7 @@ public class FaqService {
 
         log.info("🔄 Triggering RAG index rebuild...");
         ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8001/rag/rebuild", null, String.class);
-        log.info("✅ RAG rebuild request sent. response =" + response);
+        log.info("✅ RAG rebuild request sent. response ={}", response);
 
         return true;
     }
